@@ -2,7 +2,7 @@
   "name": "ARPAbetAndIPAConvertor",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/chdzq/ARPAbetAndIPAConvertor.git",
+  "repository": "https://github.com/tarling/arpabet-and-ipa-convertor-ts.git",
   "author": "James Tarling <james.tarling@ovoenergy.com>",
   "license": "MIT",
   "scripts": {
