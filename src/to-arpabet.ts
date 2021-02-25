@@ -46,17 +46,16 @@ consonants.forEach(o => {
     djTree[o.english] = o;
 });
 
-const skipDict: Record<string, string> = {};
-const stressDict: Record<string, Stress> = {};
-
-
 const skip = [
   ["(", ")"],
   ["\uff08", "\uff09"],
 ];
+const skipDict: Record<string, string> = {};
 skip.forEach(skip => {
     skipDict[skip[0]] = skip[1];
 });
+
+const stressDict: Record<string, Stress> = {};
 
 const primaryStressIpa = ["'", "\u02c8"];
 primaryStressIpa.forEach(str => {
@@ -73,9 +72,9 @@ function isStop(c:string): boolean {
     return ipaStops.includes(c);
 }
 
-function findPhonemeInArphabetList(phonemeString:string, arphabets: PhonemeTree[]): Phoneme | null {
-    for (const arphabet of arphabets) {
-        const phoneme = arphabet[phonemeString];
+function findPhonemeInPhonemeTrees(phonemeString:string, phonemeTrees: PhonemeTree[]): Phoneme | null {
+    for (const phonemeTree of phonemeTrees) {
+        const phoneme = phonemeTree[phonemeString];
         if (phoneme) {
             return phoneme;
         }
@@ -83,7 +82,7 @@ function findPhonemeInArphabetList(phonemeString:string, arphabets: PhonemeTree[
     return null;
 }
 
-function createArphabetsList(priority: ConvertPriority): PhonemeTree[] {
+function createPhonemeTreesList(priority: ConvertPriority): PhonemeTree[] {
     if ((ConvertPriority.American === priority)) {
         return [kkTree, ipaTree, djTree];
     }
@@ -96,18 +95,18 @@ function createArphabetsList(priority: ConvertPriority): PhonemeTree[] {
     throw new Error('Priority not recognised');
 }
 
-export function convert(arphabet: string, priority = ConvertPriority.American): string | null {
-    if ((! arphabet)) {
+export function toArpabet(input: string, priority = ConvertPriority.American): string | null {
+    if ((! input)) {
         return null;
     }
-    let temp_ch = "";
+    let tempCh = "";
     const skipStack: string[] = [];
-    const arphabet_list = createArphabetsList(priority);
+    const phonemeTrees = createPhonemeTreesList(priority);
     let lastPhoneme: Phoneme | null = null;
     const word = new Word();
     let syllable = new Syllable();
     let tempSyllableStr = "";
-    const chars = arphabet.split('');
+    const chars = input.split('');
     chars.forEach((ch, index) => {
         if (isStop(ch)) {
             return;
@@ -128,7 +127,7 @@ export function convert(arphabet: string, priority = ConvertPriority.American): 
         if (stress) {
             if (((! lastPhoneme) && (index > 0))) {
                 // 存在不能识别的音标 ${temp_ch}
-                throw new PhonemeError(`There is an unrecognized phonetic transcription ${temp_ch}`);
+                throw new PhonemeError(`There is an unrecognized phonetic transcription ${tempCh}`);
             } else {
                 /*
                 遇到重音标识，说明前面是是一个音节，添加到word中，并清空last_phoneme及temp_ch
@@ -143,14 +142,14 @@ export function convert(arphabet: string, priority = ConvertPriority.American): 
                     syllable = new Syllable();
                 }
                 lastPhoneme = null;
-                temp_ch = "";
+                tempCh = "";
                 tempSyllableStr = ch;
                 syllable.stress = stress;
                 return;
             }
         }
-        temp_ch += ch;
-        const tempPhoneme = findPhonemeInArphabetList(temp_ch, arphabet_list);
+        tempCh += ch;
+        const tempPhoneme = findPhonemeInPhonemeTrees(tempCh, phonemeTrees);
         if ((lastPhoneme && (! tempPhoneme))) {
             /*
             说明前面是是一个完整音标
@@ -161,8 +160,8 @@ export function convert(arphabet: string, priority = ConvertPriority.American): 
                 syllable = new Syllable();
                 tempSyllableStr = ch;
             }
-            temp_ch = ch;
-            lastPhoneme = findPhonemeInArphabetList(temp_ch, arphabet_list);
+            tempCh = ch;
+            lastPhoneme = findPhonemeInPhonemeTrees(tempCh, phonemeTrees);
         } else {
             lastPhoneme = tempPhoneme;
         }
@@ -176,7 +175,7 @@ export function convert(arphabet: string, priority = ConvertPriority.American): 
         word.addSyllable(syllable);
     } else {
         // 存在不能识别的音标 ${temp_ch}
-        throw new PhonemeError(`There is an unrecognized phonetic transcription ${temp_ch}`);
+        throw new PhonemeError(`There is an unrecognized phonetic transcription ${tempCh}`);
     }
     return word.toArpabet();
 }

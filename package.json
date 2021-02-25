@@ -4,14 +4,18 @@
   "repository": "https://github.com/tarling/arpabet-and-ipa-convertor-ts.git",
   "contributors": [
     {
-      "name" : "chdzq",
-      "url" : "https://github.com/chdzq"
+      "name": "chdzq",
+      "url": "https://github.com/chdzq"
     },
     "James Tarling <james.tarling@gmail.com>"
   ],
   "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "lint": "eslint . --ext .ts",
+    "prepublish": "yarn build",
     "test": "jest"
   },
   "dependencies": {

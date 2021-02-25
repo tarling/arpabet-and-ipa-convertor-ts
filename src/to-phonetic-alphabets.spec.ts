@@ -1,4 +1,4 @@
-import { toAmericanPhoneticAlphabet } from './arpabet2phoneticalphabet';
+import { toAmericanPhoneticAlphabet } from './to-phonetic-alphabets';
 
 describe('ARPAbet2PhoneticAlphabet', () => {
     it('Monosyllable', () => {
