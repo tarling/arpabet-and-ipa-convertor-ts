@@ -1,6 +1,6 @@
 {
   "name": "arpabet-and-ipa-convertor-ts",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": "https://github.com/tarling/arpabet-and-ipa-convertor-ts.git",
   "contributors": [
     {
@@ -10,6 +10,9 @@
     "James Tarling <james.tarling@gmail.com>"
   ],
   "license": "MIT",
+  "files": [
+    "dist/**/*"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,7 +21,7 @@
     "prepublish": "yarn build",
     "test": "jest"
   },
-  "dependencies": {
+  "devDependencies": {
     "@types/jest": "^26.0.20",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
